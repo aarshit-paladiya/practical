@@ -12,9 +12,37 @@
         </div>
         <div class="col-12">
             <div class="card">
-                <div class="card-header">
-                    User Crud Operation Without Refresh Page
+                <div class="card-header text-uppercase">
+                    <b>User Crud Operation Without Refresh Page</b>
                 </div>
+                <div class="row">
+                    <div class="col-3 m-2">
+                        <label for="search_filter">Search</label>
+                        <input class="form-control" type="text" id="search_filter" name="search_filter"
+                               placeholder="search...." value="">
+                    </div>
+                    <div class="col-2 m-2">
+                        <label for="start_date_filter">Start Date</label>
+                        <input class="form-control" type="date" id="start_date_filter" name="start_date_filter">
+                    </div>
+                    <div class="col-2 m-2">
+                        <label for="end_date_filter">To Date</label>
+                        <input class="form-control" type="date" id="end_date_filter" name="end_date_filter">
+                    </div>
+                    <div class="col-2 m-2">
+                        <label for="status_filter">Status</label>
+                        <select class="form-select" id="status_filter" name="status_filter">
+                            <option value="">All</option>
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="col-1 mt-3">
+                        <a href="{{route('users.index')}}" class="btn btn-outline-danger btn-sm mt-3"><i
+                                class="fa fa-refresh"></i></a>
+                    </div>
+                </div>
+                <hr>
                 <div class="card-body table-card-body table-responsive">
                     @include('user.user-pagination')
                 </div>
@@ -22,44 +50,81 @@
         </div>
     </div>
 
-
     <div class="modal modal-xl fade" id="userModel" tabindex="-1" aria-labelledby="userModelLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="title"></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="" method="" id="user-form">
+                <form id="user-form" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="title"></h5>
+                        <div class="col-10 d-flex justify-content-end">
+                            <div class="form-check form-switch form-check-lg">
+                                <input type="checkbox" class="form-check-input" style="width: 50px;height: 30px"
+                                       id="status"
+                                       name="status" checked>
+                                <label for="status" class="ms-2">Status</label>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+
                         <div class="row">
+
+                            <div class="profile-image mt-2"><img src="" width="50px" height="auto"></div>
                             <input type="hidden" name="user_id" id="user_id" value="">
                             <div class="col-12">
-                                <label for="name">Name</label>
-                                <input type="text" class="form-control"
-                                       id="name" name="name"
-                                       value="{{old('name')}}"
-                                       placeholder="Enter user name">
+                                <label for="profile">Profile<span class="text-danger">*</span></label>
+                                <input type="file" class="form-control"
+                                       id="profile" name="profile">
                             </div>
-                            <div class="col-12">
-                                <label for="email">Email</label>
+                            <div class="col-6">
+                                <label for="first_name">First Name<span class="text-danger">*</span></label>
+                                <input type="text" class="form-control"
+                                       id="first_name" name="first_name"
+                                       value="{{old('first_name')}}"
+                                       placeholder="Enter first name">
+                            </div>
+                            <div class="col-6">
+                                <label for="last_name">Last Name<span class="text-danger">*</span></label>
+                                <input type="text" class="form-control"
+                                       id="last_name" name="last_name"
+                                       value="{{old('last_name')}}"
+                                       placeholder="Enter last name">
+                            </div>
+                            <div class="col-6">
+                                <label for="email">Email<span class="text-danger">*</span></label>
                                 <input type="email" class="form-control"
                                        id="email" name="email"
                                        value="{{old('email')}}"
                                        placeholder="Enter email name">
                             </div>
-                            <div class="col-12">
-                                <label for="password">Password</label>
+                            <div class="col-6">
+                                <label for="password">Password<span class="text-danger">*</span></label>
                                 <input type="password" class="form-control"
                                        id="password" name="password"
                                        value="{{old('email')}}"
-                                       placeholder="Enter password name">
+                                       placeholder="Enter password">
                                 <span class="text-danger"
                                       id="blank_password">If you don't want to change, blank it.</span>
                             </div>
+                            <div class="col-6">
+                                <label for="mobile_number">Mobile No.<span class="text-danger">*</span></label>
+                                <input type="text" class="form-control"
+                                       id="mobile_number" name="mobile_number"
+                                       value="{{old('mobile_number')}}"
+                                       placeholder="Enter mobile number name">
+                            </div>
+                            <div class="col-6">
+                                <label for="bod">Birth Of Date<span class="text-danger">*</span></label>
+                                <input type="date" class="form-control"
+                                       id="bod" name="bod">
+                            </div>
+
+
                         </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" onclick="submitUser()" id="action-button"></button>
@@ -72,20 +137,87 @@
 @push('scripts')
 
     <script type="text/javascript">
+        let currentPage = 1;
         $(document).on('click', '.pagination a', function (e) {
             e.preventDefault();
             let page = $(this).attr('href').split('page=')[1];
-            record(page);
+            currentPage = parseInt(page);
+            let search = $('#search_filter').val();
+            let startDate = $('#start_date_filter').val();
+            let endDate = $('#end_date_filter').val();
+            let status = $('#status_filter').val();
+            record(page, search, startDate, endDate, status);
         });
 
-        function record(page) {
+        function record(page, search, startDate, endDate, status) {
             $.ajax({
                 url: "users/?page=" + page,
+                data: {
+                    search: search,
+                    startDate: startDate,
+                    endDate: endDate,
+                    status: status,
+                },
                 success: function (users) {
-                    $('.table-card-body').empty().html(users);
+                    $('.table-card-body').html(users);
                 }
             })
         }
+
+        function updatePagination() {
+            record(currentPage);
+        }
+
+        function createPagination() {
+            let page = 1;
+            record(page);
+        }
+
+        let search = $('#search_filter').val();
+        searchFilter(search);
+
+        function searchFilter(search) {
+            $.ajax({
+                type: 'get',
+                url: '{{route('users.index')}}',
+                data: {
+                    search: search,
+                },
+                success: function (users) {
+                    $('.table-card-body').html(users);
+                }
+            });
+        }
+
+        $('#search_filter').on('input', function () {
+            let search = $(this).val();
+            searchFilter(search);
+        });
+
+        function dateFilter(startDate, endDate, status) {
+            $.ajax({
+                type: 'get',
+                url: '{{route('users.index')}}',
+                data: {
+                    startDate: startDate,
+                    endDate: endDate,
+                    status: status,
+                },
+                success: function (users) {
+                    $('.table-card-body').html(users);
+                }
+            });
+        }
+
+        function handleDateFilter() {
+            let startDate = $('#start_date_filter').val();
+            let endDate = $('#end_date_filter').val();
+            let status = $('#status_filter').val();
+            dateFilter(startDate, endDate, status);
+        }
+
+        $('#start_date_filter, #end_date_filter,#status_filter').on('change', handleDateFilter);
+
 
         function addUser(userId) {
             let inputInvalid = $('#user-form').find('.is-invalid');
@@ -93,9 +225,14 @@
             $('.error-message').remove();
             $('#title').text('Add New User');
             $('#user_id').val(userId);
-            $('#name').val('');
+            $('#first_name').val('');
+            $('#last_name').val('');
             $('#email').val('');
             $('#password').val('');
+            $('#mobile_number').val('');
+            $('#bod').val('');
+            $('.profile-image').hide();
+            $('#status').prop('checked', true);
             $('#blank_password').hide();
             $('#action-button').text('Submit');
             $('#userModel').modal('show')
@@ -115,9 +252,20 @@
                         inputInvalid.removeClass('is-invalid');
                         $('.error-message').remove();
                         $('#title').text('Edit User');
+                        $('.profile-image').show();
+                        let imageUrl = '{{ config('app.url') }}/profile_image/' + response.data.profile;
+                        $('.profile-image img').attr('src', imageUrl);
                         $('#user_id').val(response.data.id);
-                        $('#name').val(response.data.name);
+                        $('#first_name').val(response.data.first_name);
+                        $('#last_name').val(response.data.last_name);
                         $('#email').val(response.data.email);
+                        $('#mobile_number').val(response.data.mobile_number);
+                        $('#bod').val(response.data.bod);
+                        if (response.data.status == '1') {
+                            $('#status').prop('checked', true);
+                        } else {
+                            $('#status').prop('checked', false);
+                        }
                         $('#password').val('');
                         $('#blank_password').show();
                         $('#action-button').text('Update');
@@ -128,19 +276,15 @@
         }
 
         function submitUser() {
-            let formArray = $('#user-form').serializeArray();
-            let formData = {};
-
-            $.each(formArray, function (i, field) {
-                formData[field.name] = field.value;
-            });
-
+            let formData = new FormData($('#user-form')[0]);
             $.ajax({
                 type: 'post',
-                url: '{{route('users.store')}}',
-                data: {
-                    ...formData,
-                    _token: '{{ csrf_token() }}',
+                url: '{{ route('users.store') }}',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
                 success: function (response) {
                     if (response.status) {
@@ -151,7 +295,7 @@
                         } else {
                             updatePagination();
                         }
-                    }else{
+                    } else {
                         toastr.error(response.message);
                     }
                 },
@@ -173,23 +317,6 @@
             $('#userModel').modal('show');
         }
 
-        function updatePagination() {
-            let page = $('.pagination a').attr('href').split('page=')[1];
-            let currentPage = 1;
-            if (page == '2') {
-                console.log('plus');
-                currentPage = parseInt(page) - 1;
-            } else {
-                console.log('minus');
-                currentPage = parseInt(page) + 1;
-            }
-            record(currentPage);
-        }
-
-        function createPagination() {
-            let page = 1;
-            record(page);
-        }
 
         function deleteUser(userId) {
             Swal.fire({

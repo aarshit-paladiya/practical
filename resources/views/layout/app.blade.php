@@ -7,15 +7,24 @@
     <title>@yield('title') &bigtriangledown; {{config('app.name')}}</title>
     @include('layout.include.styles')
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 @include('layout.include.nav-bar')
-<div class="container" id="app-content">
+<div class="container flex-grow-1">
     <div class="row">
         <div class="col-12">
             @yield("content")
         </div>
     </div>
 </div>
+<footer class="mt-4 p-4" style="background: #989696">
+    <div class="container text-white text-center">
+        <div class="row">
+            <div class="col-12">
+                <span>Made by aarshit paladiya</span>
+            </div>
+        </div>
+    </div>
+</footer>
 @include('layout.include.scripts')
 @stack('scripts')
 </body>

@@ -6,7 +6,7 @@
 
 <style>
     body{
-        background: #dddcdc;
+        background: #fbfbfb;
     }
     ul li a.active {
         color: red !important;

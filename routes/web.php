@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\StripeController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserListController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -41,4 +43,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('store', [UserController::class, 'store'])->name('store');
         Route::post('delete', [UserController::class, 'delete'])->name('delete');
     });
+
+    Route::group(['prefix' => 'user-lists', 'as' => 'user-lists.'], function () {
+        Route::get('/', [UserListController::class, 'index'])->name('index');
+    });
+
+    Route::get('stripe', [StripeController::class, 'index'])->name('stripe');
+    Route::post('payment-process', [StripeController::class, 'process'])->name('payment.process');
 });
